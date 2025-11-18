@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowLeft, Calendar, ChevronDown, Building2, Pill } from "lucide-react";
+import { ArrowLeft, Calendar, ChevronDown, Building2, Pill, Edit } from "lucide-react";
 import { useState } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { Button } from "./ui/button"; // Button 컴포넌트를 사용하기 위해 추가
 
 interface MedicalHistoryPageProps {
   onBack: () => void;
@@ -28,96 +29,104 @@ interface MedicalVisit {
   dayOfWeek: string;
 }
 
+// 진료내역 mock data (이전 수정분과 동일)
 const mockRecords: MedicalRecord[] = [
   {
     id: 1,
-    code: "REC-2024-001",
-    patientName: "김웰리",
-    patientAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-    hospitalName: "서울대학교병원",
-    visitDate: "2024년 11월 15일",
-    visitTime: "오후 2:30",
-    doctor: "김현수 교수",
-    memo: "정기 검진 완료, 특이사항 없음"
+    code: "20250811-012345",
+    patientName: "김동석",
+    patientAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
+    hospitalName: "매일건강의원",
+    visitDate: "2025.08.11",
+    visitTime: "14:00",
+    doctor: "이준호",
+    memo: "아빠 감기몸살로 내원, 3일 뒤 재진"
   },
   {
     id: 2,
-    code: "REC-2024-002",
+    code: "20250805-012345",
     patientName: "박승희",
     patientAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-    hospitalName: "강남세브란스병원",
-    visitDate: "2024년 11월 10일",
-    visitTime: "오전 10:00",
-    doctor: "이영희 원장",
-    memo: "감기 증상으로 내원, 약 처방"
+    hospitalName: "바른정형외과의원",
+    visitDate: "2025.08.05",
+    visitTime: "10:25",
+    doctor: "김슬기",
+    memo: "엄마 2일마다 물리치료"
   },
   {
     id: 3,
     code: "REC-2024-003",
-    patientName: "김동석",
-    patientAvatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
-    hospitalName: "아산병원",
-    visitDate: "2024년 11월 5일",
-    visitTime: "오후 4:00",
+    patientName: "김웰리",
+    patientAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+    hospitalName: "서울대학교병원",
+    visitDate: "2024.11.05",
+    visitTime: "16:00",
     doctor: "박민준 교수",
-    memo: "건강검진 상담"
+    memo: "정기 검진 완료, 특이사항 없음"
   },
 ];
 
+// 의료내역 mock data (새로운 시안에 맞춰 업데이트)
 const mockMedicalVisits: MedicalVisit[] = [
   {
     id: 1,
     type: "pharmacy",
-    name: "우리온누리약국",
-    visitDate: "2024년 11월 16일",
-    dayOfWeek: "토요일"
+    name: "하나약국",
+    visitDate: "2025.07.14",
+    dayOfWeek: "월",
   },
   {
     id: 2,
     type: "hospital",
-    name: "서울대학교병원",
-    visitDate: "2024년 11월 15일",
-    dayOfWeek: "금요일"
+    name: "고운피부과",
+    visitDate: "2025.07.14",
+    dayOfWeek: "월",
   },
   {
     id: 3,
     type: "pharmacy",
-    name: "건강플러스약국",
-    visitDate: "2024년 11월 12일",
-    dayOfWeek: "화요일"
+    name: "우리들약국",
+    visitDate: "2025.07.05",
+    dayOfWeek: "월",
   },
   {
     id: 4,
     type: "hospital",
-    name: "강남세브란스병원",
-    visitDate: "2024년 11월 10일",
-    dayOfWeek: "일요일"
+    name: "희망찬정신건강의학과 의원",
+    visitDate: "2025.07.05",
+    dayOfWeek: "토",
   },
   {
     id: 5,
     type: "pharmacy",
-    name: "메디팜약국",
-    visitDate: "2024년 11월 6일",
-    dayOfWeek: "수요일"
+    name: "서초드림약국",
+    visitDate: "2025.07.05",
+    dayOfWeek: "월",
   },
-  {
-    id: 6,
-    type: "hospital",
-    name: "아산병원",
-    visitDate: "2024년 11월 5일",
-    dayOfWeek: "화요일"
-  },
+  // 기존 데이터는 삭제하거나 더 추가할 수 있습니다.
 ];
+
+// 요일 매핑 함수 (이전 수정분과 동일)
+const getDayOfWeek = (dateString: string) => {
+  if (dateString.includes('08.11')) return '(월)';
+  if (dateString.includes('08.05')) return '(화)';
+  // 7월 예시 날짜 추가
+  if (dateString.includes('07.14')) return '(월)';
+  if (dateString.includes('07.05') && mockMedicalVisits.some(v => v.name.includes('약국') && v.visitDate === dateString)) return '(월)';
+  if (dateString.includes('07.05') && mockMedicalVisits.some(v => v.name.includes('의원') && v.visitDate === dateString)) return '(토)';
+  return '';
+}
 
 export function MedicalHistoryPage({ onBack }: MedicalHistoryPageProps) {
   const [activeTab, setActiveTab] = useState<"treatment" | "medical">("treatment");
-  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [selectedFilter, setSelectedFilter] = useState<string>("period"); 
 
   const filters = [
     { id: "period", label: "기간검색" },
-    { id: "kim", label: "김웰리" },
-    { id: "park", label: "박승희" },
-    { id: "kim2", label: "김동석" },
+    { id: "kim-welly", label: "김웰리" },
+    { id: "park-sw", label: "박승희" },
+    { id: "kim-ds", label: "김동석" },
+    { id: "kim-ds2", label: "김동석" }, 
   ];
 
   return (
@@ -147,7 +156,7 @@ export function MedicalHistoryPage({ onBack }: MedicalHistoryPageProps) {
               : "text-gray-400"
           }`}
         >
-          진료내역
+          진료 내역
         </button>
         <button
           onClick={() => setActiveTab("medical")}
@@ -157,7 +166,7 @@ export function MedicalHistoryPage({ onBack }: MedicalHistoryPageProps) {
               : "text-gray-400"
           }`}
         >
-          의료내역
+          의료 내역
         </button>
       </div>
 
@@ -167,33 +176,50 @@ export function MedicalHistoryPage({ onBack }: MedicalHistoryPageProps) {
           <button
             key={filter.id}
             onClick={() => setSelectedFilter(filter.id)}
-            className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
+            className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors border ${
               selectedFilter === filter.id
-                ? "bg-[#36D2C5] text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                ? "bg-white text-gray-800 border-gray-400"
+                : "bg-gray-100 text-gray-600 border-gray-100 hover:bg-gray-200"
             }`}
           >
             {filter.label}
             {filter.id === "period" && (
               <ChevronDown size={16} className="inline-block ml-1" />
             )}
+            {filter.id === "kim-ds" && (
+                 <ImageWithFallback
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop"
+                    alt="김동석"
+                    className="w-5 h-5 rounded-full inline-block ml-1"
+                />
+            )}
+             {filter.id === "kim-ds2" && (
+                 <ImageWithFallback
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop"
+                    alt="김동석"
+                    className="w-5 h-5 rounded-full inline-block ml-1"
+                />
+            )}
           </button>
         ))}
       </div>
 
       {/* Content */}
-      <div className="px-4 pb-20">
+      {/* 배경색을 흰색이 아닌 #F7F7F7로 변경 */}
+      <div className="px-4 pb-20 bg-[#F7F7F7] flex-1">
         {activeTab === "treatment" ? (
-          // 진료내역
-          <div className="space-y-4">
+          // 진료내역 (이전 수정 내용 유지)
+          <div className="space-y-4 pt-4">
             {mockRecords.map((record) => (
               <div
                 key={record.id}
-                className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3"
+                className="bg-white rounded-xl p-4 shadow-sm space-y-3 border border-gray-100"
               >
-                {/* 첫번째줄: 진료코드, 프로필+이름 */}
+                {/* 1. 진료코드 + 프로필+이름 */}
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">{record.code}</span>
+                  <span className="text-xs text-gray-500">
+                    {record.code}
+                  </span>
                   <div className="flex items-center gap-2">
                     <ImageWithFallback
                       src={record.patientAvatar}
@@ -206,73 +232,80 @@ export function MedicalHistoryPage({ onBack }: MedicalHistoryPageProps) {
                   </div>
                 </div>
 
-                {/* 두번째줄: 병원이름 */}
-                <div className="text-gray-900">
+                {/* 2. 병원이름 */}
+                <div className="text-lg font-bold text-gray-900">
                   {record.hospitalName}
                 </div>
 
-                {/* 세번째줄: 내원일 */}
+                {/* 3. 내원일 */}
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar size={16} className="text-gray-400" />
                   <span>내원일</span>
-                  <span className="text-gray-800">{record.visitDate}</span>
-                  <span className="text-gray-800">{record.visitTime}</span>
+                  <span className="text-gray-800 font-medium">
+                    {record.visitDate}{getDayOfWeek(record.visitDate)} {record.visitTime}
+                  </span>
                 </div>
 
-                {/* 네번째줄: 진료의 */}
+                {/* 4. 진료의 */}
                 <div className="text-sm text-gray-600">
                   <span>진료의 </span>
-                  <span className="text-gray-800">{record.doctor}</span>
+                  <span className="text-gray-800 font-medium">{record.doctor}</span>
                 </div>
 
-                {/* 다섯번째줄: 한줄메모 */}
-                <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700">
-                  {record.memo}
+                {/* 5. 한줄메모 */}
+                <div className="bg-gray-50 rounded-lg p-3 text-sm text-gray-700 flex items-start gap-2">
+                    <Edit size={16} className="text-gray-500 mt-0.5" />
+                    <span>{record.memo}</span>
                 </div>
 
-                {/* 여섯번째줄: 버튼 */}
+                {/* 6. 버튼 */}
                 <div className="flex gap-2 pt-2">
-                  <button className="flex-1 py-3 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-                    리뷰쓰기
-                  </button>
-                  <button className="flex-1 py-3 bg-[#36D2C5] text-white rounded-lg text-sm hover:bg-[#2BC0B3] transition-colors">
+                  <Button 
+                    variant="outline"
+                    className="flex-1 py-3 h-14 text-sm font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    {record.id === 1 ? '리뷰쓰기' : '작성한 리뷰'} 
+                  </Button>
+                  <Button 
+                    className="flex-1 py-3 h-14 text-sm font-semibold bg-[#36D2C5] text-white rounded-lg hover:bg-[#00C2B3] transition-colors"
+                  >
                     재접수하기
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          // 의료내역
-          <div className="space-y-4">
+          // 의료내역 - 새로운 시안 디자인 적용
+          <div className="space-y-4 pt-4">
             {mockMedicalVisits.map((visit) => (
               <div
                 key={visit.id}
-                className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3"
+                // 카드 스타일: 시안과 같이 배경 흰색, 둥근 모서리, 그림자/테두리 없음
+                className="bg-white rounded-xl p-4 shadow-none space-y-2.5"
               >
-                {/* 병원/약국 이름 */}
-                <div className="flex items-center gap-2">
-                  {visit.type === "hospital" ? (
-                    <Building2 size={20} className="text-[#36D2C5]" />
-                  ) : (
-                    <Pill size={20} className="text-[#36D2C5]" />
-                  )}
-                  <span className="text-gray-900 font-medium">{visit.name}</span>
+                {/* 1. 병원/약국 이름 */}
+                <div className="text-lg font-semibold text-gray-900">
+                  {visit.name}
                 </div>
 
-                {/* 내원일 */}
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar size={16} className="text-gray-400" />
+                {/* 2. 내원일 (아이콘 제거, 텍스트 스타일 변경) */}
+                <div className="text-sm text-gray-500">
                   <span>내원일</span>
-                  <span className="text-gray-800">{visit.visitDate}</span>
-                  <span className="text-gray-800">({visit.dayOfWeek})</span>
+                  {/* 시안 형식: 2025.07.14(월) */}
+                  <span className="ml-2">
+                    {visit.visitDate}{getDayOfWeek(visit.visitDate)}
+                  </span>
                 </div>
-
-                {/* 약국인 경우에만 버튼 표시 */}
+                
+                {/* 3. 약국인 경우에만 버튼 표시 */}
                 {visit.type === "pharmacy" && (
-                  <button className="w-full py-3 bg-[#36D2C5] text-white rounded-lg text-sm hover:bg-[#2BC0B3] transition-colors">
+                  <Button 
+                    variant="outline"
+                    // 버튼 스타일: 시안과 같이 흰 배경, 민트색 테두리, 민트색 텍스트
+                    className="w-full py-3 h-12 text-sm font-semibold border-2 border-[#36D2C5] text-[#36D2C5] bg-white hover:bg-gray-50 transition-colors mt-2"
+                  >
                     내가 받은 약 보기
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
