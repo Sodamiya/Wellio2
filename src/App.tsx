@@ -4,18 +4,39 @@ import { HomePage } from "./components/HomePage";
 import { HospitalSearchPage } from "./components/HospitalSearchPage";
 import { CommunityPage } from "./components/CommunityPage";
 import { ProfilePage } from "./components/ProfilePage"; // 👈 1. ProfilePage import
+import { HospitalDetailPage } from "./components/HospitalDetailPage"; // 👈 HospitalDetailPage import
 
-type Page = "home" | "community" | "hospital" | "profile";
+type Page = "home" | "community" | "hospital" | "profile" | "hospital-detail";
+
+// 병원 타입 정의
+interface Hospital {
+  id: number;
+  name: string;
+  department: string;
+  address: string;
+  phone: string;
+  hours: string;
+  description: string;
+  imageUrl: string;
+  latitude?: number;
+  longitude?: number;
+}
 
 export default function App() {
   // 👈 2. 로그인 페이지가 보이도록 false로 유지
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("김건강");
   const [currentPage, setCurrentPage] = useState<Page>("home");
+  const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
 
   const handleLogin = (name: string) => {
     setUserName(name);
     setIsLoggedIn(true);
+  };
+
+  const handleHospitalClick = (hospital: Hospital) => {
+    setSelectedHospital(hospital);
+    setCurrentPage("hospital-detail");
   };
 
   if (!isLoggedIn) {
@@ -35,6 +56,13 @@ export default function App() {
         {currentPage === "hospital" && (
           <HospitalSearchPage
             onBack={() => setCurrentPage("home")}
+            onHospitalClick={handleHospitalClick}
+          />
+        )}
+        {currentPage === "hospital-detail" && selectedHospital && (
+          <HospitalDetailPage
+            hospital={selectedHospital}
+            onBack={() => setCurrentPage("hospital")}
           />
         )}
         {currentPage === "community" && (

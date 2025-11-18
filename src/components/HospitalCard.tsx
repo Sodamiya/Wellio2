@@ -17,11 +17,15 @@ interface Hospital {
 
 interface HospitalCardProps {
   hospital: Hospital;
+  onClick?: () => void;
 }
 
-export function HospitalCard({ hospital }: HospitalCardProps) {
+export function HospitalCard({ hospital, onClick }: HospitalCardProps) {
   return (
-    <div className="flex flex-col bg-white p-4 border-b border-gray-100 last:border-b-0 md:border md:rounded-2xl md:shadow-sm md:m-2">
+    <div
+      onClick={onClick}
+      className="flex flex-col bg-white p-4 border-b border-gray-100 last:border-b-0 md:border md:rounded-2xl md:shadow-sm md:m-2 cursor-pointer hover:bg-gray-50 transition-colors"
+    >
       {/* 1. 상단 정보: 이미지, 이름, 전문의, 하트 */}
       <div className="flex gap-4">
         {/* [수정] 이미지 크기 w-12 h-12 (48px)로 변경, 반응형 제거 */}
@@ -39,7 +43,12 @@ export function HospitalCard({ hospital }: HospitalCardProps) {
             <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">
               {hospital.name}
             </h3>
-            <button className="text-gray-300 hover:text-red-500 transition-colors">
+            <button
+              className="text-gray-300 hover:text-red-500 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
               <Heart size={24} />
             </button>
           </div>

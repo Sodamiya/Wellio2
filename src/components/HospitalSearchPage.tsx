@@ -4,10 +4,12 @@ import { HospitalCard } from "./HospitalCard"; // 수정된 HospitalCard 임포�
 
 interface HospitalSearchPageProps {
   onBack: () => void;
+  onHospitalClick: (hospital: any) => void;
 }
 
 export function HospitalSearchPage({
   onBack,
+  onHospitalClick,
 }: HospitalSearchPageProps) {
   const [selectedFilter, setSelectedFilter] =
     useState("거리순");
@@ -25,54 +27,74 @@ export function HospitalSearchPage({
     {
       id: 1,
       name: "매일건강의원",
+      department: "가정의학과",
       specialtyText: "가정의학과와 전문의 2명",
       hours: "10:00-20:00",
       distance: "37m",
       address: "서울 서초구 서초대로 59번길 19, 201호",
+      phone: "02-1234-5678",
+      description: "환자 중심의 진료를 제공하는 가정의학과 전문 병원입니다. 만성질환 관리부터 건강검진까지 종합적인 의료 서비스를 제공합니다.",
       isAvailableNow: true,
       rating: 4.8,
       reviews: 223,
       imageUrl:
         "https://images.unsplash.com/photo-1580281658136-17c835359e86?w=100&h=100&fit=crop",
+      latitude: 37.4949,
+      longitude: 127.0283,
     },
     {
       id: 2,
       name: "365클리닉 강남본점",
+      department: "피부과",
       specialtyText: "피부과와 전문의 3명",
       hours: "09:30-20:30",
       distance: "58m",
       address: "서울 서초구 서초대로 16가길, 3층",
+      phone: "02-2345-6789",
+      description: "최신 피부과 시술 장비를 갖춘 전문 클리닉입니다. 여드름, 미백, 안티에이징 등 다양한 피부 치료를 제공합니다.",
       isAvailableNow: true,
       rating: 4.6,
       reviews: 12,
       imageUrl:
         "https://via.placeholder.com/100x100/E7F3FF/2F80ED?text=Logo",
+      latitude: 37.4950,
+      longitude: 127.0285,
     },
     {
       id: 3,
       name: "사랑니쏙쏙 강남본점",
+      department: "치과",
       specialtyText: "치과",
       hours: "10:00-18:00",
       distance: "167m",
       address: "서울 서초구 강남대로 102",
+      phone: "02-3456-7890",
+      description: "사랑니 발치 전문 치과입니다. 통증 최소화와 빠른 회복을 위한 최신 시술 방법을 사용합니다.",
       isAvailableNow: true,
       rating: 4.7,
       reviews: 41,
       imageUrl:
         "https://via.placeholder.com/100x100/E8F8F7/00C2B3?text=Logo",
+      latitude: 37.4955,
+      longitude: 127.0290,
     },
     {
       id: 4,
       name: "강남예쁜이치과의원",
+      department: "치과",
       specialtyText: "치과",
       hours: "09:00-19:00",
       distance: "720m",
       address: "서울시 강남구 선릉로 345",
+      phone: "02-4567-8901",
+      description: "심미 치과 치료를 전문으로 하는 치과입니다. 라미네이트, 임플란트 등 다양한 치료를 제공합니다.",
       isAvailableNow: false,
       rating: 4.7,
       reviews: 312,
       imageUrl:
         "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop",
+      latitude: 37.4960,
+      longitude: 127.0295,
     },
   ];
 
@@ -132,6 +154,7 @@ export function HospitalSearchPage({
             <HospitalCard
               key={hospital.id}
               hospital={hospital}
+              onClick={() => onHospitalClick(hospital)}
             />
           ))}
         </div>
