@@ -226,7 +226,6 @@ export function ProfilePage({
                 />
               </svg>
             </li>
-            {/* 👇 [추가] 건강검진 내역 */}
             <li className="px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between border-b border-gray-100 last:border-b-0">
               <span className="text-gray-700">
                 건강검진 내역
@@ -249,13 +248,12 @@ export function ProfilePage({
           </ul>
         </div>
 
-        {/* 👇 [추가] Customer Service Section */}
+        {/* Customer Service Section */}
         <div className="mt-6 bg-white py-6">
           <div className="px-4 sm:px-6 md:px-8 flex items-center">
-            {/* Phone Icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-blue-500 mr-2" // 아이콘 색상 (text-blue-500)
+              className="h-6 w-6 text-blue-500 mr-2"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -312,13 +310,13 @@ export function ProfilePage({
         </div>
       </main>
 
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] sm:max-w-md md:max-w-2xl lg:max-w-4xl z-50">
-        <BottomNav
-          currentPage={currentPage}
-          onPageChange={onPageChange}
-        />
-      </div>
+      {/* 👇 [수정] BottomNav를 감싸던 fixed div를 제거했습니다.
+        BottomNav 컴포넌트가 스스로 fixed 위치를 잡습니다.
+      */}
+      <BottomNav
+        currentPage={currentPage}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 }

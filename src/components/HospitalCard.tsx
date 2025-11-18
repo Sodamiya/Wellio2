@@ -1,14 +1,18 @@
-import { MapPin, Star, Clock } from "lucide-react";
+import { Heart, Star } from "lucide-react";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
 
+// 카드 데이터 인터페이스 (이전과 동일)
 interface Hospital {
   id: number;
   name: string;
-  department: string;
+  specialtyText: string;
+  hours: string;
   distance: string;
-  status: string;
+  address: string;
+  isAvailableNow: boolean;
   rating: number;
   reviews: number;
-  address: string;
+  imageUrl: string;
 }
 
 interface HospitalCardProps {
@@ -17,51 +21,70 @@ interface HospitalCardProps {
 
 export function HospitalCard({ hospital }: HospitalCardProps) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
-      {/* Hospital Name & Department */}
-      <div className="flex items-start justify-between mb-2">
-        <div>
-          <h3 className="text-[#1A1A1A] mb-1">{hospital.name}</h3>
-          <p className="text-gray-500">{hospital.department}</p>
+    <div className="flex flex-col bg-white p-4 border-b border-gray-100 last:border-b-0 md:border md:rounded-2xl md:shadow-sm md:m-2">
+      {/* 1. 상단 정보: 이미지, 이름, 전문의, 하트 */}
+      <div className="flex gap-4">
+        {/* [수정] 이미지 크기 w-12 h-12 (48px)로 변경, 반응형 제거 */}
+        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+          <ImageWithFallback
+            src={hospital.imageUrl}
+            alt={hospital.name}
+            className="w-full h-full object-cover"
+          />
         </div>
-        <span 
-          className={`px-3 py-1 rounded-full text-xs ${
-            hospital.status === "진료중"
-              ? 'bg-[#E8F8F7] text-[#00C2B3]'
-              : 'bg-[#FFF4E6] text-[#FF9800]'
-          }`}
-        >
-          {hospital.status}
-        </span>
-      </div>
-      
-      {/* Address */}
-      <div className="flex items-center gap-1 mb-3 text-gray-600">
-        <MapPin size={16} />
-        <span>{hospital.address}</span>
-      </div>
-      
-      {/* Info Row */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-4">
-          {/* Rating */}
-          <div className="flex items-center gap-1">
-            <Star size={16} className="text-[#FFB800] fill-[#FFB800]" />
-            <span className="text-[#1A1A1A]">{hospital.rating}</span>
-            <span className="text-gray-400">({hospital.reviews})</span>
+
+        {/* 이름, 전문의, 하트 */}
+        <div className="flex-1 overflow-hidden">
+          <div className="flex justify-between items-start">
+            <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">
+              {hospital.name}
+            </h3>
+            <button className="text-gray-300 hover:text-red-500 transition-colors">
+              <Heart size={24} />
+            </button>
           </div>
-          
-          {/* Distance */}
-          <div className="flex items-center gap-1 text-gray-600">
-            <MapPin size={16} />
-            <span>{hospital.distance}</span>
+          <p className="text-sm text-gray-600">
+            {hospital.specialtyText}
+          </p>
+        </div>
+      </div>
+
+      {/* 2. 하단 정보: 진료시간, 주소, 별점 */}
+      {/* [수정] pt-4 와 border-t 제거 */}
+      <div className="mt-4">
+        {/* 진료 시간 */}
+        <div className="flex items-center text-sm text-gray-700 mb-2">
+          <span className="font-semibold text-[#1A73E8] mr-2">
+            오늘 진료
+          </span>
+          <span>{hospital.hours}</span>
+        </div>
+
+        {/* 거리 + 주소 */}
+        <p className="text-sm text-gray-500 mb-3 truncate">
+          {hospital.distance} | {hospital.address}
+        </p>
+
+        {/* 태그 + 별점 */}
+        <div className="flex items-center gap-2">
+          {hospital.isAvailableNow && (
+            <span className="bg-[#E7F3FF] text-[#2F80ED] text-xs font-semibold px-2 py-1 rounded-full">
+              즉시 접수 가능
+            </span>
+          )}
+          <div className="flex items-center gap-0.5 text-sm">
+            <Star
+              size={16}
+              className="text-[#FFB800] fill-[#FFB800]"
+            />
+            <span className="text-[#1A1A1A] font-bold ml-1">
+              {hospital.rating}
+            </span>
+            <span className="text-gray-400">
+              ({hospital.reviews})
+            </span>
           </div>
         </div>
-        
-        {/* Appointment Button */}
-        <button className="bg-[#36D2C5] text-white px-4 py-2 rounded-lg hover:bg-[#00C2B3] transition-colors">
-          예약하기
-        </button>
       </div>
     </div>
   );

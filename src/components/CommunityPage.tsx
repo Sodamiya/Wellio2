@@ -152,7 +152,7 @@ export function CommunityPage({ onBack }: CommunityPageProps) {
 
       {/* Bottom Navigation with FAB */}
       {/* [수정] max-w-[430px]와 mx-auto 제거 (부모 div가 이미 제어) */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white border-t border-gray-100">
+      <div className="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white border-t border-gray-100 z-20">
         <div className="relative px-4 pt-2 pb-4">
           <div className="flex items-center justify-around">
             <button className="flex flex-col items-center gap-1 text-gray-400">

@@ -6,12 +6,10 @@ function BackgroundSvg() {
   return (
     <svg
       width="100%"
-      // [수정] height="218" 제거 -> 높이가 너비 비율에 맞게 자동 조절됨
       viewBox="0 0 375 218"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className="absolute bottom-0 left-0 w-full z-0"
-      // [수정] "slice" (잘라내기) -> "meet" (비율 맞춰 다 보여주기)
       preserveAspectRatio="xMidYMax meet"
     >
       <g clipPath="url(#clip0_8255_7621)">
@@ -69,14 +67,15 @@ function BackgroundSvg() {
 
 export function UserGreeting({ userName }: UserGreetingProps) {
   return (
-    // 부모 div 높이 (예: 250px)
-    // 반응형 높이 및 패딩 추가
-    <div className="relative w-full h-[250px] md:h-[280px] overflow-hidden">
+    <div className="relative w-full h-[250px] md:h-[420px] overflow-hidden">
       {/* 1. SVG 배경 */}
       <BackgroundSvg />
 
       {/* 2. 텍스트 */}
-      <div className="relative z-10 px-4 sm:px-6 md:px-8 pt-12 md:pt-16 space-y-1">
+      {/* [수정] 텍스트 패딩을 pt-12 (48px) -> pt-20 (80px)로 수정
+        (헤더 높이 h-16 (64px) 보다 크게)
+      */}
+      <div className="relative z-10 px-4 sm:px-6 md:px-8 pt-20 md:pt-24 space-y-1">
         <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A]">
           {userName}님
         </h1>
