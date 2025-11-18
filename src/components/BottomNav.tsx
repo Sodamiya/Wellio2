@@ -27,7 +27,7 @@ export function BottomNav({
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 mx-auto border-t border-gray-100 bg-white max-w-[430px] sm:max-w-md md:max-w-2xl lg:max-w-4xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 mx-auto border-t border-gray-100 bg-white max-w-[500px]">
       <div className="grid grid-cols-4 h-20">
         {navItems.map((item, index) => (
           <button

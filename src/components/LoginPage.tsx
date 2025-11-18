@@ -25,7 +25,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#E8F8F7] flex justify-center items-center px-5">
-      <div className="w-full max-w-[430px]">
+      <div className="w-full max-w-[500px]">
         {/* Logo Section */}
         <div className="text-center mb-12">
           <div className="w-20 h-20 mx-auto mb-4 rounded-full flex items-center justify-center">

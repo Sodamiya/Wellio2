@@ -58,12 +58,13 @@ export function CommunityPage({ onBack, onUploadClick }: CommunityPageProps) {
   ];
 
   return (
-    // [수정] min-h-screen 제거 -> 'relative'와 'pb-20' (하단 네비 높이만큼) 추가
-    // 반응형 max-w 추가
-    <div className="relative bg-white flex flex-col max-w-[430px] sm:max-w-md md:max-w-2xl lg:max-w-4xl mx-auto pb-20">
-      {/* Header */}
-      {/* [수정] 'sticky'와 'top-0' 추가하여 헤더 고정 */}
-      <header className="sticky top-0 z-20 px-4 sm:px-6 md:px-8 py-3 flex items-center justify-between border-b border-gray-100 w-full bg-white">
+    // max-w는 화면 중앙 정렬을 위한 것이므로 유지
+    <div className="relative bg-white flex flex-col max-w-[500px] mx-auto min-h-screen pb-20">
+      
+      {/* Header (높이 110px) */}
+      <header 
+        className="sticky top-0 z-30 px-4 flex items-center justify-between border-b border-gray-100 w-full bg-white h-[110px]"
+      >
         <div className="flex items-center gap-4">
           <button
             onClick={onBack}
@@ -89,52 +90,52 @@ export function CommunityPage({ onBack, onUploadClick }: CommunityPageProps) {
         </div>
       </header>
 
-      {/* Content Area */}
-      {/* [수정] 'flex-1' 및 높이 관련 클래스 모두 제거, Swiper가 콘텐츠 높이를 잡도록 함 */}
+      {/* Content Area (Swiper) */}
       <div className="w-full">
         <Swiper
           direction={"vertical"}
-          // [수정] 'h-full' -> 'h-screen' (화면 높이만큼)
-          // pb-20 (하단 네비 여백)과 헤더 높이를 뺀 높이
-          className="w-full h-[calc(100vh-65px-80px)]" // (화면높이 - 헤더높이 - 하단네비높이)
+          className="w-full h-[calc(100vh-190px)]"
         >
           {posts.map((post) => (
             <SwiperSlide key={post.id}>
-              {/* [수정] px-4(좌우 여백), flex, justify-center 추가 */}
-              <div className="h-full flex flex-col justify-center items-center px-4">
-                {/* Post Card */}
-                <div className="relative h-[450px] rounded-2xl overflow-hidden w-full">
+              {/* SwiperSlide 내부 콘텐츠: 좌우 여백 px-4 유지 */}
+              <div className="h-full flex flex-col items-center px-4 py-4"> 
+                
+                {/* Post Card - 🚨 max-w-[360px] 제거 🚨 */}
+                <div className="relative h-[85%] w-full rounded-2xl overflow-hidden shadow-lg self-center">
                   <ImageWithFallback
                     src={post.image}
                     alt="Community post"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover bg-gray-100" 
                   />
                   {/* Badge */}
-                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1">
+                  <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1 text-sm font-medium">
                     <span>{post.badge}</span>
                   </div>
-                  {/* User Profile */}
-                  <div className="absolute bottom-4 left-4 flex items-center gap-2">
-                    <ImageWithFallback
-                      src={post.userAvatar}
-                      alt="User avatar"
-                      className="w-8 h-8 rounded-full border-2 border-white"
-                    />
-                    <span className="text-white">
-                      {post.caption}
-                    </span>
-                    {/* +1 알림 배지 */}
-                    <div className="relative bg-gray-100 rounded-full px-2.5 py-1 text-xs font-bold text-gray-800 ml-1">
-                      +1
-                      <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                  {/* User Profile + Caption + +N Batch */}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <ImageWithFallback
+                        src={post.userAvatar}
+                        alt="User avatar"
+                        className="w-8 h-8 rounded-full border-2 border-white"
+                      />
+                      <span className="text-white font-semibold text-sm">
+                        {post.caption}
+                      </span>
+                    </div>
+                    {/* +N 알림 배지 */}
+                    <div className="bg-gray-100 rounded-full px-2.5 py-1 text-xs font-bold text-gray-800 flex items-center justify-center relative">
+                      +2
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                     </div>
                   </div>
                 </div>
 
-                {/* Comment Input (SwiperSlide 안으로 이동) */}
+                {/* 댓글 입력창 - 🚨 max-w-[360px] 제거 🚨 */}
                 <div className="flex items-center gap-2 w-full mt-4">
-                  <button className="p-3 text-gray-500 hover:text-gray-800">
-                    <RefreshCw size={20} />
+                  <button className="p-2 text-gray-500 hover:text-gray-800">
+                    <RefreshCw size={24} />
                   </button>
                   <div className="flex-1 bg-[#F5F5F5] rounded-full px-4 py-3">
                     <input
@@ -151,14 +152,13 @@ export function CommunityPage({ onBack, onUploadClick }: CommunityPageProps) {
       </div>
       {/* End of Content Area */}
 
-      {/* Bottom Navigation with FAB */}
-      {/* [수정] max-w-[430px]와 mx-auto 제거 (부모 div가 이미 제어) */}
-      <div className="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto bg-white border-t border-gray-100 z-20">
+      {/* Bottom Navigation with FAB (Fixed, 맨 아래) */}
+      <div className="fixed bottom-0 left-0 right-0 max-w-[500px] mx-auto bg-white border-t border-gray-100 z-20">
         <div className="relative px-4 pt-2 pb-4">
           <div className="flex items-center justify-around">
-            <button className="flex flex-col items-center gap-1 text-gray-400">
+            <button className="flex flex-col items-center gap-1 text-gray-800">
               <LayoutGrid size={24} />
-              <span className="text-xs">모아보기</span>
+              <span className="text-xs font-semibold">모아보기</span>
             </button>
             <div className="w-16" />
             <button className="flex flex-col items-center gap-1 text-gray-400">

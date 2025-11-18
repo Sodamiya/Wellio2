@@ -46,7 +46,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F7F7F7] flex justify-center">
-      <div className="w-full max-w-[430px] sm:max-w-md md:max-w-2xl lg:max-w-4xl min-h-screen bg-white relative shadow-xl">
+      <div className="w-full max-w-[500px] min-h-screen bg-white relative shadow-xl">
         {currentPage === "home" && (
           <HomePage
             userName={userName}

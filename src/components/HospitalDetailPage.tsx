@@ -460,7 +460,7 @@ export function HospitalDetailPage({
       </main>
 
       {/* [수정] 하단 고정 접수 버튼: '예약하기', '즉시 접수' 두 버튼으로 변경 */}
-      <div className="fixed bottom-0 left-0 right-0 z-20 p-4 bg-white border-t border-gray-100 max-w-[430px] sm:max-w-md md:max-w-2xl lg:max-w-4xl mx-auto">
+      <div className="fixed bottom-0 left-0 right-0 z-20 p-4 bg-white border-t border-gray-100 max-w-[500px] mx-auto">
         <div className="flex space-x-3">
           {/* 예약하기 버튼 (흰색/테두리) */}
           <Button
