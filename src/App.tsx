@@ -5,8 +5,9 @@ import { HospitalSearchPage } from "./components/HospitalSearchPage";
 import { CommunityPage } from "./components/CommunityPage";
 import { ProfilePage } from "./components/ProfilePage"; // 👈 1. ProfilePage import
 import { HospitalDetailPage } from "./components/HospitalDetailPage"; // 👈 HospitalDetailPage import
+import { UploadPage } from "./components/UploadPage"; // 👈 UploadPage import
 
-type Page = "home" | "community" | "hospital" | "profile" | "hospital-detail";
+type Page = "home" | "community" | "hospital" | "profile" | "hospital-detail" | "upload";
 
 // 병원 타입 정의
 interface Hospital {
@@ -68,6 +69,7 @@ export default function App() {
         {currentPage === "community" && (
           <CommunityPage
             onBack={() => setCurrentPage("home")}
+            onUploadClick={() => setCurrentPage("upload")}
           />
         )}
         {/* 👇 3. '준비중' 텍스트 대신 ProfilePage 컴포넌트로 교체 */}
@@ -77,6 +79,12 @@ export default function App() {
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             onBack={() => setCurrentPage("home")} // '뒤로가기' 누르면 홈으로
+          />
+        )}
+        {/* 👇 4. '업로드' 페이지 추가 */}
+        {currentPage === "upload" && (
+          <UploadPage
+            onBack={() => setCurrentPage("home")}
           />
         )}
       </div>

@@ -17,9 +17,10 @@ import "swiper/css";
 
 interface CommunityPageProps {
   onBack: () => void;
+  onUploadClick: () => void;
 }
 
-export function CommunityPage({ onBack }: CommunityPageProps) {
+export function CommunityPage({ onBack, onUploadClick }: CommunityPageProps) {
   const [selectedGroup, setSelectedGroup] =
     useState("우리가족");
 
@@ -165,7 +166,10 @@ export function CommunityPage({ onBack }: CommunityPageProps) {
               <span className="text-xs">캘린더</span>
             </button>
           </div>
-          <button className="absolute left-1/2 -translate-x-1/2 -top-[34px] w-14 h-14 bg-[#36D2C5] rounded-full flex items-center justify-center shadow-lg hover:bg-[#00C2B3] transition-colors">
+          <button
+            className="absolute left-1/2 -translate-x-1/2 -top-[34px] w-14 h-14 bg-[#36D2C5] rounded-full flex items-center justify-center shadow-lg hover:bg-[#00C2B3] transition-colors"
+            onClick={onUploadClick}
+          >
             <Plus size={28} className="text-white" />
           </button>
         </div>

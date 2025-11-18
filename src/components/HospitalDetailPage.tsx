@@ -59,9 +59,9 @@ export function HospitalDetailPage({
 
       // 기존 스크립트가 있는지 확인
       const existingScript = document.querySelector(
-        'script[src*="dapi.kakao.com"]'
+        'script[src*="dapi.kakao.com"]',
       );
-      
+
       if (existingScript) {
         // 이미 스크립트가 있으면 로드 대기
         const checkKakao = setInterval(() => {
@@ -70,7 +70,7 @@ export function HospitalDetailPage({
             setIsMapLoaded(true);
           }
         }, 100);
-        
+
         setTimeout(() => clearInterval(checkKakao), 5000);
         return;
       }
@@ -79,7 +79,7 @@ export function HospitalDetailPage({
       const script = document.createElement("script");
       script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=ee7ef6c37b67c27768d7dcb2f13f0a83`;
       script.type = "text/javascript";
-      
+
       script.onload = () => {
         // 카카오 객체가 로드될 때까지 대기
         const checkKakao = setInterval(() => {
@@ -88,7 +88,7 @@ export function HospitalDetailPage({
             setIsMapLoaded(true);
           }
         }, 100);
-        
+
         // 5초 후에도 로드 안되면 타임아웃
         setTimeout(() => {
           clearInterval(checkKakao);
@@ -459,11 +459,22 @@ export function HospitalDetailPage({
         </div>
       </main>
 
-      {/* [추가] 하단 고정 접수 버튼 */}
+      {/* [수정] 하단 고정 접수 버튼: '예약하기', '즉시 접수' 두 버튼으로 변경 */}
       <div className="fixed bottom-0 left-0 right-0 z-20 p-4 bg-white border-t border-gray-100 max-w-[430px] sm:max-w-md md:max-w-2xl lg:max-w-4xl mx-auto">
-        <Button className="w-full h-14 text-lg bg-[#36D2C5] hover:bg-[#00C2B3]">
-          접수하기
-        </Button>
+        <div className="flex space-x-3">
+          {/* 예약하기 버튼 (흰색/테두리) */}
+          <Button
+            variant="outline"
+            className="flex-1 h-14 text-lg font-semibold border-2 border-[#36D2C5] text-[#36D2C5] bg-white hover:bg-gray-50"
+          >
+            예약하기
+          </Button>
+
+          {/* 즉시 접수 버튼 (민트색) */}
+          <Button className="flex-1 h-14 text-lg font-semibold bg-[#36D2C5] hover:bg-[#00C2B3]">
+            즉시 접수
+          </Button>
+        </div>
       </div>
     </div>
   );
