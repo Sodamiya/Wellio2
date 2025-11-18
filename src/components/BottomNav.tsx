@@ -1,0 +1,36 @@
+import { Home, Users, Calendar, User } from "lucide-react";
+
+interface BottomNavProps {
+  currentPage: string;
+  onPageChange: (page: "home" | "community" | "hospital" | "profile") => void;
+}
+
+export function BottomNav({ currentPage, onPageChange }: BottomNavProps) {
+  const navItems = [
+    { icon: Home, label: "홈", page: "home" as const },
+    { icon: Users, label: "커뮤니티", page: "community" as const },
+    { icon: Calendar, label: "병원예약", page: "hospital" as const },
+    { icon: User, label: "내정보", page: "profile" as const },
+  ];
+  
+  return (
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 mx-auto max-w-[430px]">
+      <div className="grid grid-cols-4 h-20">
+        {navItems.map((item, index) => (
+          <button
+            key={index}
+            onClick={() => onPageChange(item.page)}
+            className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+              currentPage === item.page
+                ? 'text-[#36D2C5]'
+                : 'text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            <item.icon size={24} />
+            <span className="text-xs">{item.label}</span>
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
