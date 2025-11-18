@@ -1,3 +1,4 @@
+import { ChevronRight } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 interface Doctor {
@@ -14,7 +15,9 @@ interface DoctorCardProps {
 
 export function DoctorCard({ doctor }: DoctorCardProps) {
   return (
-    <div className="w-[280px] bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+    // [수정] w-[280px] -> w-full (부모 SwiperSlide/Grid가 너비 제어)
+    // [수정] p-4, border, shadow 제거 -> 시안에 맞게 변경
+    <button className="w-full bg-white rounded-2xl p-4 flex items-center justify-between shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
           <ImageWithFallback
@@ -23,17 +26,24 @@ export function DoctorCard({ doctor }: DoctorCardProps) {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-1">
-          <h4 className="font-semibold text-gray-900">{doctor.name}</h4>
-          <p className="text-sm text-gray-600 mt-1">{doctor.specialty}</p>
-          <p className="text-xs text-gray-500 mt-1">{doctor.experience}</p>
+        <div className="flex-1 text-left">
+          <h4 className="font-semibold text-gray-900">
+            {doctor.name}
+          </h4>
+          <p className="text-sm text-gray-600 mt-1">
+            {doctor.specialty}
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            {doctor.experience}
+          </p>
         </div>
       </div>
-      <div className="mt-4 pt-4 border-t border-gray-100">
-        <button className="w-full bg-[#E8F8F7] text-[#00C2B3] py-2 rounded-lg font-medium hover:bg-[#D4FBF7] transition-colors">
-          예약하기
-        </button>
-      </div>
-    </div>
+
+      {/* [수정] 예약하기 버튼 -> ChevronRight 아이콘 */}
+      <ChevronRight
+        size={20}
+        className="text-gray-400 flex-shrink-0"
+      />
+    </button>
   );
 }
