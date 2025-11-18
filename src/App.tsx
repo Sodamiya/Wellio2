@@ -6,8 +6,11 @@ import { CommunityPage } from "./components/CommunityPage";
 import { ProfilePage } from "./components/ProfilePage"; // 👈 1. ProfilePage import
 import { HospitalDetailPage } from "./components/HospitalDetailPage"; // 👈 HospitalDetailPage import
 import { UploadPage } from "./components/UploadPage"; // 👈 UploadPage import
+import { MedicalHistoryPage } from "./components/MedicalHistoryPage"; // 👈 MedicalHistoryPage import
+import { MyReviewsPage } from "./components/MyReviewsPage"; // 👈 MyReviewsPage import
+import { FavoriteHospitalsPage } from "./components/FavoriteHospitalsPage"; // 👈 FavoriteHospitalsPage import
 
-type Page = "home" | "community" | "hospital" | "profile" | "hospital-detail" | "upload";
+type Page = "home" | "community" | "hospital" | "profile" | "hospital-detail" | "upload" | "medical-history" | "my-reviews" | "favorite-hospitals";
 
 // 병원 타입 정의
 interface Hospital {
@@ -23,12 +26,188 @@ interface Hospital {
   longitude?: number;
 }
 
+// 포스트 타입 정의
+interface Post {
+  id: number;
+  image: string;
+  badge?: string;
+  userAvatar: string;
+  caption: string;
+  userName: string;
+  textOverlay?: string;
+  location?: string;
+  weather?: string;
+  time?: string;
+  health?: string;
+  comments?: Array<{
+    userName: string;
+    userAvatar: string;
+    text: string;
+    timestamp: string;
+  }>;
+  reactions?: Array<{
+    emoji: string;
+    users: Array<{
+      userName: string;
+      userAvatar: string;
+    }>;
+  }>;
+}
+
 export default function App() {
   // 👈 2. 로그인 페이지가 보이도록 false로 유지
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("김건강");
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
+  
+  // 찜한 병원 목록 관리
+  const [favoriteHospitals, setFavoriteHospitals] = useState<Hospital[]>([]);
+  
+  // 커뮤니티 포스트 state
+  const [posts, setPosts] = useState<Post[]>([
+    {
+      id: 1,
+      image:
+        "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&q=80",
+      badge: "🏆 주 1회 함께 걷기",
+      userAvatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
+      caption: "챌린지 첫 시작!",
+      userName: "김건강",
+      textOverlay: "오늘부터 시작하는 건강한 습관!",
+      comments: [
+        {
+          userName: "박활력",
+          userAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+          text: "멋져요! 저도 함께할게요 💪",
+          timestamp: "5분 전"
+        },
+        {
+          userName: "이평화",
+          userAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
+          text: "화이팅하세요!",
+          timestamp: "2분 전"
+        }
+      ],
+      reactions: [
+        {
+          emoji: "❤️",
+          users: [
+            {
+              userName: "박활력",
+              userAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
+            },
+            {
+              userName: "이평화",
+              userAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
+            }
+          ]
+        },
+        {
+          emoji: "👍",
+          users: [
+            {
+              userName: "정활동",
+              userAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 2,
+      image:
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+      badge: "💪 매일 운동하기",
+      userAvatar:
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+      caption: "오늘도 달렸어요!",
+      userName: "박활력",
+      location: "한강공원",
+      time: "오전 6:30",
+      weather: "맑음 18°C",
+      comments: [
+        {
+          userName: "김건강",
+          userAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
+          text: "역시 박활력님! 👏",
+          timestamp: "10분 전"
+        }
+      ],
+      reactions: [
+        {
+          emoji: "🔥",
+          users: [
+            {
+              userName: "김건강",
+              userAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80"
+            },
+            {
+              userName: "이평화",
+              userAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 3,
+      image:
+        "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80",
+      badge: "🧘‍♀️ 매일 요가",
+      userAvatar:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80",
+      caption: "마음 챙기기",
+      userName: "이평화",
+      textOverlay: "하루를 평화롭게 시작하는 아침 요가",
+      health: "혈압 120/80",
+      comments: [
+        {
+          userName: "김건강",
+          userAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
+          text: "평화로운 하루 되세요 🙏",
+          timestamp: "1시간 전"
+        },
+        {
+          userName: "박활력",
+          userAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80",
+          text: "너무 좋아 보여요!",
+          timestamp: "30분 전"
+        },
+        {
+          userName: "정활동",
+          userAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80",
+          text: "저도 요가 시작해볼까요?",
+          timestamp: "15분 전"
+        }
+      ],
+      reactions: [
+        {
+          emoji: "🧘‍♀️",
+          users: [
+            {
+              userName: "박활력",
+              userAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80"
+            }
+          ]
+        },
+        {
+          emoji: "💚",
+          users: [
+            {
+              userName: "김건강",
+              userAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80"
+            },
+            {
+              userName: "정활동",
+              userAvatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80"
+            }
+          ]
+        }
+      ]
+    },
+  ]);
 
   const handleLogin = (name: string) => {
     setUserName(name);
@@ -38,6 +217,29 @@ export default function App() {
   const handleHospitalClick = (hospital: Hospital) => {
     setSelectedHospital(hospital);
     setCurrentPage("hospital-detail");
+  };
+
+  const handleUpload = (newPost: Omit<Post, "id" | "userName" | "userAvatar">) => {
+    const post: Post = {
+      ...newPost,
+      id: posts.length + 1,
+      userName: userName,
+      userAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&q=80",
+    };
+    setPosts([post, ...posts]); // 맨 앞에 추가
+    setCurrentPage("community"); // 커뮤니티로 이동
+  };
+
+  // 찜한 병원 토글 함수
+  const toggleFavorite = (hospital: any) => {
+    const isFavorite = favoriteHospitals.some(h => h.id === hospital.id);
+    if (isFavorite) {
+      // 이미 찜한 병원이면 제거
+      setFavoriteHospitals(favoriteHospitals.filter(h => h.id !== hospital.id));
+    } else {
+      // 찜하지 않은 병원이면 추가
+      setFavoriteHospitals([...favoriteHospitals, hospital]);
+    }
   };
 
   if (!isLoggedIn) {
@@ -58,6 +260,8 @@ export default function App() {
           <HospitalSearchPage
             onBack={() => setCurrentPage("home")}
             onHospitalClick={handleHospitalClick}
+            favoriteHospitals={favoriteHospitals}
+            onToggleFavorite={toggleFavorite}
           />
         )}
         {currentPage === "hospital-detail" && selectedHospital && (
@@ -70,6 +274,7 @@ export default function App() {
           <CommunityPage
             onBack={() => setCurrentPage("home")}
             onUploadClick={() => setCurrentPage("upload")}
+            posts={posts}
           />
         )}
         {/* 👇 3. '준비중' 텍스트 대신 ProfilePage 컴포넌트로 교체 */}
@@ -79,12 +284,35 @@ export default function App() {
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             onBack={() => setCurrentPage("home")} // '뒤로가기' 누르면 홈으로
+            onMyReviewsClick={() => setCurrentPage("my-reviews")}
+            onFavoriteHospitalsClick={() => setCurrentPage("favorite-hospitals")}
           />
         )}
         {/* 👇 4. '업로드' 페이지 추가 */}
         {currentPage === "upload" && (
           <UploadPage
+            onBack={() => setCurrentPage("community")}
+            onUpload={handleUpload}
+          />
+        )}
+        {/* 👇 5. '의료기록' 페이지 추가 */}
+        {currentPage === "medical-history" && (
+          <MedicalHistoryPage
             onBack={() => setCurrentPage("home")}
+          />
+        )}
+        {/* 👇 6. '내 리뷰' 페이지 추가 */}
+        {currentPage === "my-reviews" && (
+          <MyReviewsPage
+            onBack={() => setCurrentPage("home")}
+          />
+        )}
+        {/* 👇 7. '즐겨찾는 병원' 페이지 추가 */}
+        {currentPage === "favorite-hospitals" && (
+          <FavoriteHospitalsPage
+            onBack={() => setCurrentPage("home")}
+            favoriteHospitals={favoriteHospitals}
+            onToggleFavorite={toggleFavorite}
           />
         )}
       </div>

@@ -11,7 +11,7 @@ interface HomePageProps {
   userName: string;
   currentPage: string;
   onPageChange: (
-    page: "home" | "community" | "hospital" | "profile",
+    page: "home" | "community" | "hospital" | "profile" | "medical-history",
   ) => void;
 }
 

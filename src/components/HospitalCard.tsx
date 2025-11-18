@@ -18,9 +18,17 @@ interface Hospital {
 interface HospitalCardProps {
   hospital: Hospital;
   onClick?: () => void;
+  isFavorite?: boolean;
+  favoriteHospitals?: any[];
+  onToggleFavorite?: (hospital: any) => void;
 }
 
-export function HospitalCard({ hospital, onClick }: HospitalCardProps) {
+export function HospitalCard({ hospital, onClick, isFavorite, favoriteHospitals, onToggleFavorite }: HospitalCardProps) {
+  // isFavorite prop이 전달되면 그것을 사용, 아니면 favoriteHospitals에서 확인
+  const isHospitalFavorite = isFavorite !== undefined 
+    ? isFavorite 
+    : favoriteHospitals?.some(h => h.id === hospital.id) || false;
+
   return (
     <div
       onClick={onClick}
@@ -44,12 +52,17 @@ export function HospitalCard({ hospital, onClick }: HospitalCardProps) {
               {hospital.name}
             </h3>
             <button
-              className="text-gray-300 hover:text-red-500 transition-colors"
+              className={`transition-colors ${
+                isHospitalFavorite 
+                  ? "text-red-500 fill-red-500" 
+                  : "text-gray-300 hover:text-red-500"
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
+                onToggleFavorite?.(hospital);
               }}
             >
-              <Heart size={24} />
+              <Heart size={24} className={isHospitalFavorite ? "fill-red-500" : ""} />
             </button>
           </div>
           <p className="text-sm text-gray-600">

@@ -5,9 +5,11 @@ interface ProfilePageProps {
   userName: string;
   currentPage: string;
   onPageChange: (
-    page: "home" | "community" | "hospital" | "profile",
+    page: "home" | "community" | "hospital" | "profile" | "medical-history",
   ) => void;
   onBack: () => void;
+  onMyReviewsClick: () => void;
+  onFavoriteHospitalsClick: () => void;
 }
 
 export function ProfilePage({
@@ -15,6 +17,8 @@ export function ProfilePage({
   currentPage,
   onPageChange,
   onBack,
+  onMyReviewsClick,
+  onFavoriteHospitalsClick,
 }: ProfilePageProps) {
   return (
     <div className="flex flex-col min-h-screen">
@@ -102,7 +106,10 @@ export function ProfilePage({
 
         {/* Activity Buttons */}
         <div className="flex bg-white mx-4 sm:mx-6 md:mx-8 rounded-lg shadow-sm mt-3 overflow-hidden">
-          <button className="flex-1 flex items-center justify-center py-3 text-gray-700 font-medium border-r border-gray-200">
+          <button
+            className="flex-1 flex items-center justify-center py-3 text-gray-700 font-medium border-r border-gray-200"
+            onClick={onMyReviewsClick}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 text-gray-500 mr-2"
@@ -119,7 +126,10 @@ export function ProfilePage({
             </svg>
             나의 후기
           </button>
-          <button className="flex-1 flex items-center justify-center py-3 text-gray-700 font-medium">
+          <button
+            className="flex-1 flex items-center justify-center py-3 text-gray-700 font-medium"
+            onClick={onFavoriteHospitalsClick}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 text-red-500 mr-2"

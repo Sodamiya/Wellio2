@@ -1,9 +1,9 @@
-import { Home, Users, Calendar, User } from "lucide-react";
+import { Home, Users, Calendar, User, ClipboardList } from "lucide-react";
 
 interface BottomNavProps {
   currentPage: string;
   onPageChange: (
-    page: "home" | "community" | "hospital" | "profile",
+    page: "home" | "community" | "hospital" | "profile" | "medical-history",
   ) => void;
 }
 
@@ -19,9 +19,9 @@ export function BottomNav({
       page: "community" as const,
     },
     {
-      icon: Calendar,
-      label: "병원예약",
-      page: "hospital" as const,
+      icon: ClipboardList,
+      label: "진료내역",
+      page: "medical-history" as const,
     },
     { icon: User, label: "내정보", page: "profile" as const },
   ];
