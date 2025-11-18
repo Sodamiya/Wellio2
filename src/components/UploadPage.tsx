@@ -8,6 +8,12 @@ import {
   Upload,
   Edit,
   Sparkles,
+  X,
+  Type,
+  MapPin,
+  Cloud,
+  Clock,
+  Heart,
 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { Button } from "./ui/button";
@@ -46,6 +52,7 @@ export function UploadPage({ onBack }: UploadPageProps) {
   >(null);
   const [isUploadMode, setIsUploadMode] = useState(false);
   const [hasCameraDevice, setHasCameraDevice] = useState<boolean | null>(null);
+  const [isDetailEditMode, setIsDetailEditMode] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -230,10 +237,40 @@ export function UploadPage({ onBack }: UploadPageProps) {
     }
   };
 
-  // 입력하기 버튼 (업로드 모드에서)
+  // 입력하기 버튼 (업로드 모드에서) -> 세부조정 모드로 전환
   const handleEdit = () => {
-    // TODO: 텍스트 입력 화면으로 전환
-    console.log("입력하기 버튼 클릭");
+    setIsDetailEditMode(true);
+  };
+
+  // 세부조정 모드 종료
+  const handleCloseDetailEdit = () => {
+    setIsDetailEditMode(false);
+  };
+
+  // 세부조정 버튼 핸들러들
+  const handleTextInput = () => {
+    console.log("텍스트 입력");
+    // TODO: 텍스트 입력 모달 구현
+  };
+
+  const handleLocationInput = () => {
+    console.log("위치 입력");
+    // TODO: 위치 입력 모달 구현
+  };
+
+  const handleWeatherInput = () => {
+    console.log("날씨 입력");
+    // TODO: 날씨 입력 모달 구현
+  };
+
+  const handleTimeInput = () => {
+    console.log("시간 입력");
+    // TODO: 시간 입력 모달 구현
+  };
+
+  const handleHealthInput = () => {
+    console.log("건강기록 입력");
+    // TODO: 건강기록 연동 모달 구현
   };
 
   // 필터 버튼 (업로드 모드에서)
@@ -352,14 +389,23 @@ export function UploadPage({ onBack }: UploadPageProps) {
 
         {/* 상단 Header (fixed) */}
         <header className="fixed top-0 left-0 right-0 z-40 px-4 py-4 flex items-center justify-center w-full bg-white max-w-[500px] mx-auto">
-          <button
-            onClick={onBack}
-            className="absolute left-4 p-1"
-          >
-            <ArrowLeft size={24} className="text-[#1A1A1A]" />
-          </button>
+          {isDetailEditMode ? (
+            <button
+              onClick={handleCloseDetailEdit}
+              className="absolute left-4 p-1"
+            >
+              <X size={24} className="text-[#1A1A1A]" />
+            </button>
+          ) : (
+            <button
+              onClick={onBack}
+              className="absolute left-4 p-1"
+            >
+              <ArrowLeft size={24} className="text-[#1A1A1A]" />
+            </button>
+          )}
           <h1 className="text-xl font-bold text-[#1A1A1A] text-center">
-            업로드
+            {isDetailEditMode ? "세부조정" : "업로드"}
           </h1>
         </header>
 
@@ -374,43 +420,110 @@ export function UploadPage({ onBack }: UploadPageProps) {
             className="hidden"
           />
 
-          <div className="flex items-center justify-between max-w-md mx-auto px-6">
-            {/* 왼쪽 버튼 - 촬영 모드: 갤러리, 업로드 모드: 입력하기 */}
-            <button
-              onClick={isUploadMode ? handleEdit : () => fileInputRef.current?.click()}
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200"
-            >
-              {isUploadMode ? (
-                <Edit size={32} className="" />
-              ) : (
-                <ImageIcon size={32} className="" />
-              )}
-            </button>
+          {isDetailEditMode ? (
+            /* 세부조정 모드: 5개 동그란 아이콘 버튼(위) + 업로드 버튼(아래 중앙) */
+            <div className="flex flex-col items-center gap-3 max-w-md mx-auto px-4">
+              {/* 5개 세부조정 아이콘 버튼 */}
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={handleTextInput}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#E7F3FF] text-[#2F80ED] transition-colors hover:bg-[#D0E7FF]">
+                    <Type size={24} />
+                  </div>
+                  <span className="text-xs text-gray-600">텍스트</span>
+                </button>
 
-            {/* 가운데 버튼 - 촬영 모드: 촬영, 업로드 모드: 업로드 */}
-            <button
-              onClick={handleCapture}
-              className="w-16 h-16 rounded-full border-4 border-gray-100 bg-[#36D2C5] hover:bg-[#00C2B3] transition-colors flex items-center justify-center"
-            >
-              {isUploadMode ? (
+                <button
+                  onClick={handleLocationInput}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#FFF4E5] text-[#FF9800] transition-colors hover:bg-[#FFE8CC]">
+                    <MapPin size={24} />
+                  </div>
+                  <span className="text-xs text-gray-600">위치</span>
+                </button>
+
+                <button
+                  onClick={handleWeatherInput}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#E8F8F7] text-[#36D2C5] transition-colors hover:bg-[#D0F0ED]">
+                    <Cloud size={24} />
+                  </div>
+                  <span className="text-xs text-gray-600">날씨</span>
+                </button>
+
+                <button
+                  onClick={handleTimeInput}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#F3E5F5] text-[#9C27B0] transition-colors hover:bg-[#E1BEE7]">
+                    <Clock size={24} />
+                  </div>
+                  <span className="text-xs text-gray-600">시간</span>
+                </button>
+
+                <button
+                  onClick={handleHealthInput}
+                  className="flex flex-col items-center gap-2"
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-full bg-[#FFEBEE] text-[#F44336] transition-colors hover:bg-[#FFCDD2]">
+                    <Heart size={24} />
+                  </div>
+                  <span className="text-xs text-gray-600">건강</span>
+                </button>
+              </div>
+
+              {/* 업로드 버튼 (중앙) */}
+              <button
+                onClick={handleCapture}
+                className="w-16 h-16 rounded-full border-4 border-gray-100 bg-[#36D2C5] hover:bg-[#00C2B3] transition-colors flex items-center justify-center"
+              >
                 <Upload size={28} className="text-white" />
-              ) : (
-                <div className="w-14 h-14 rounded-full border-4 border-white" />
-              )}
-            </button>
+              </button>
+            </div>
+          ) : (
+            /* 기본 모드: 3개 버튼 (갤러리/촬영/카메라전환 또는 입력하기/업로드/필터) */
+            <div className="flex items-center justify-between max-w-md mx-auto px-6">
+              {/* 왼쪽 버튼 - 촬영 모드: 갤러리, 업로드 모드: 입력하기 */}
+              <button
+                onClick={isUploadMode ? handleEdit : () => fileInputRef.current?.click()}
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors hover:bg-gray-200"
+              >
+                {isUploadMode ? (
+                  <Edit size={32} className="" />
+                ) : (
+                  <ImageIcon size={32} className="" />
+                )}
+              </button>
 
-            {/* 오른쪽 버튼 - 촬영 모드: 카메라 전환, 업로드 모드: 필터 */}
-            <button
-              onClick={isUploadMode ? handleFilter : handleCameraSwitch}
-              className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors"
-            >
-              {isUploadMode ? (
-                <Sparkles size={32} className="" />
-              ) : (
-                <RefreshCw size={32} className="" />
-              )}
-            </button>
-          </div>
+              {/* 가운데 버튼 - 촬영 모드: 촬영, 업로드 모드: 업로드 */}
+              <button
+                onClick={handleCapture}
+                className="w-16 h-16 rounded-full border-4 border-gray-100 bg-[#36D2C5] hover:bg-[#00C2B3] transition-colors flex items-center justify-center"
+              >
+                {isUploadMode ? (
+                  <Upload size={28} className="text-white" />
+                ) : (
+                  <div className="w-14 h-14 rounded-full border-4 border-white" />
+                )}
+              </button>
+
+              {/* 오른쪽 버튼 - 촬영 모드: 카메라 전환, 업로드 모드: 필터 */}
+              <button
+                onClick={isUploadMode ? handleFilter : handleCameraSwitch}
+                className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-100 text-gray-500 transition-colors"
+              >
+                {isUploadMode ? (
+                  <Sparkles size={32} className="" />
+                ) : (
+                  <RefreshCw size={32} className="" />
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>
