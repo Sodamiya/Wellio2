@@ -41,15 +41,18 @@ export function HospitalDetailPage({
 }: HospitalDetailPageProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState(false);
 
   // 카카오맵 스크립트 동적 로딩
   useEffect(() => {
     const loadKakaoMap = () => {
+      // 이미 로드되어 있는 경우
       if (window.kakao && window.kakao.maps) {
         setIsMapLoaded(true);
         return;
       }
 
+      // 스크립트가 이미 추가되어 있는 경우
       const existingScript = document.querySelector(
         'script[src*="dapi.kakao.com"]',
       );
@@ -62,32 +65,33 @@ export function HospitalDetailPage({
           }
         }, 100);
 
-        setTimeout(() => clearInterval(checkKakao), 5000);
-        return;
-      }
-
-      const script = document.createElement("script");
-      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=ee7ef6c37b67c27768d7dcb2f13f0a83`;
-      script.type = "text/javascript";
-
-      script.onload = () => {
-        const checkKakao = setInterval(() => {
-          if (window.kakao && window.kakao.maps) {
-            clearInterval(checkKakao);
-            setIsMapLoaded(true);
-          }
-        }, 100);
-
         setTimeout(() => {
           clearInterval(checkKakao);
           if (!window.kakao || !window.kakao.maps) {
-            console.error("카카오맵 객체 초기화 타임아웃");
+            setMapError(true);
           }
         }, 5000);
+        return;
+      }
+
+      // 새 스크립트 추가
+      const script = document.createElement("script");
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=ee7ef6c37b67c27768d7dcb2f13f0a83&autoload=false`;
+      script.type = "text/javascript";
+
+      script.onload = () => {
+        // kakao.maps.load를 사용하여 로드
+        if (window.kakao && window.kakao.maps) {
+          window.kakao.maps.load(() => {
+            setIsMapLoaded(true);
+          });
+        } else {
+          setMapError(true);
+        }
       };
 
-      script.onerror = (error) => {
-        console.error("카카오맵 스크립트 로딩 실패:", error);
+      script.onerror = () => {
+        setMapError(true);
       };
 
       document.head.appendChild(script);
@@ -271,6 +275,36 @@ export function HospitalDetailPage({
               >
                 {subject}
               </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-6 bg-white py-6">
+          <div className="px-4 sm:px-6 md:px-8 mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">
+              의료진 소개
+            </h3>
+          </div>
+          
+          {/* 모바일: Swiper */}
+          <div className="md:hidden">
+            <Swiper
+              slidesPerView="auto"
+              spaceBetween={12}
+              className="!px-4 sm:!px-6"
+            >
+              {doctors.map((doctor) => (
+                <SwiperSlide key={doctor.id} style={{ width: '263px' }}>
+                  <DoctorCard doctor={doctor} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+
+          {/* 태블릿/데스크톱: 그리드 */}
+          <div className="hidden md:grid md:grid-cols-2 gap-4 px-4 sm:px-6 md:px-8">
+            {doctors.map((doctor) => (
+              <DoctorCard key={doctor.id} doctor={doctor} />
             ))}
           </div>
         </div>

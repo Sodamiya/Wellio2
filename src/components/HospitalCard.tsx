@@ -1,5 +1,6 @@
 import { Heart, Star } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { toast } from "sonner@2.0.3";
 
 // 카드 데이터 인터페이스 (이전과 동일)
 interface Hospital {
@@ -21,9 +22,10 @@ interface HospitalCardProps {
   isFavorite?: boolean;
   favoriteHospitals?: any[];
   onToggleFavorite?: (hospital: any) => void;
+  isInFavoritePage?: boolean; // 찜한 병원 페이지에서 사용 중인지 여부
 }
 
-export function HospitalCard({ hospital, onClick, isFavorite, favoriteHospitals, onToggleFavorite }: HospitalCardProps) {
+export function HospitalCard({ hospital, onClick, isFavorite, favoriteHospitals, onToggleFavorite, isInFavoritePage }: HospitalCardProps) {
   // isFavorite prop이 전달되면 그것을 사용, 아니면 favoriteHospitals에서 확인
   const isHospitalFavorite = isFavorite !== undefined 
     ? isFavorite 
@@ -59,7 +61,24 @@ export function HospitalCard({ hospital, onClick, isFavorite, favoriteHospitals,
               }`}
               onClick={(e) => {
                 e.stopPropagation();
-                onToggleFavorite?.(hospital);
+                
+                // 찜한 병원 페이지에서 찜 해제 시 확인 팝업 표시
+                if (isInFavoritePage && isHospitalFavorite) {
+                  const confirmed = window.confirm(`${hospital.name}을(를) 즐겨찾기에서 삭제하시겠습니까?`);
+                  if (!confirmed) {
+                    return; // 취소하면 아무것도 하지 않음
+                  }
+                  toast.success(`${hospital.name} 즐겨찾기에서 제거되었습니다.`);
+                  onToggleFavorite?.(hospital);
+                } else {
+                  // 병원찾기 페이지에서는 바로 추가/제거
+                  if (isHospitalFavorite) {
+                    toast.success(`${hospital.name} 즐겨찾기에서 제거되었습니다.`);
+                  } else {
+                    toast.success(`${hospital.name} 즐겨찾기에 추가되었습니다.`);
+                  }
+                  onToggleFavorite?.(hospital);
+                }
               }}
             >
               <Heart size={24} className={isHospitalFavorite ? "fill-red-500" : ""} />

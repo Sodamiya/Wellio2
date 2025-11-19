@@ -19,11 +19,13 @@ import { useState } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { motion, AnimatePresence } from "motion/react";
+import confetti from "canvas-confetti";
 import "swiper/css";
 
 interface CommunityPageProps {
   onBack: () => void;
   onUploadClick: () => void;
+  onNotificationClick?: () => void; // 알림 버튼 추가
   posts: Array<{
     id: number;
     image: string;
@@ -52,7 +54,7 @@ interface CommunityPageProps {
   }>;
 }
 
-export function CommunityPage({ onBack, onUploadClick, posts }: CommunityPageProps) {
+export function CommunityPage({ onBack, onUploadClick, onNotificationClick, posts }: CommunityPageProps) {
   const [selectedGroup, setSelectedGroup] =
     useState("우리가족");
   const [isGridView, setIsGridView] = useState(false);
@@ -275,7 +277,10 @@ export function CommunityPage({ onBack, onUploadClick, posts }: CommunityPagePro
               <button className="w-6 h-6 flex items-center justify-center">
                 <Search size={20} className="text-[#1A1A1A]" />
               </button>
-              <button className="w-6 h-6 flex items-center justify-center">
+              <button
+                className="w-6 h-6 flex items-center justify-center"
+                onClick={onNotificationClick}
+              >
                 <Bell size={20} className="text-[#1A1A1A]" />
               </button>
             </div>
@@ -358,79 +363,75 @@ export function CommunityPage({ onBack, onUploadClick, posts }: CommunityPagePro
 
                     {/* 리액션 모드 오버레이 */}
                     {selectedPostForReaction === post.id && (
-                      <div className="absolute inset-0 bg-black/70 z-10 flex flex-col">
-                        {/* 닫기 버튼 */}
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPostForReaction(null);
-                          }}
-                          className="absolute top-4 left-4 w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-colors z-20"
-                        >
-                          <X size={20} className="text-white" />
-                        </button>
-
-                        {/* 오른쪽 상단: 감정표현 + 사용자 프로필 */}
+                      <div 
+                        className="absolute inset-0 bg-black/70 z-10 flex flex-col cursor-pointer"
+                        onClick={() => setSelectedPostForReaction(null)}
+                      >
+                        {/* 오른쪽 상단: 감정표현/프로필 형태로 표시 */}
                         {getAllReactions(post.id, post.reactions).length > 0 && (
-                          <div className="absolute top-4 right-4 flex flex-col gap-2 z-20">
-                            {getAllReactions(post.id, post.reactions).map((reaction, idx) => (
-                              <div
-                                key={idx}
-                                className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-2 flex items-center gap-2"
-                              >
-                                <span className="text-2xl">{reaction.emoji}</span>
-                                <div className="flex -space-x-2">
-                                  {reaction.users.map((user, userIdx) => (
-                                    <ImageWithFallback
-                                      key={userIdx}
-                                      src={user.userAvatar}
-                                      alt={user.userName}
-                                      className="w-6 h-6 rounded-full border-2 border-white"
-                                    />
-                                  ))}
+                          <div 
+                            className="absolute top-4 right-4 flex flex-wrap gap-2 justify-end max-w-[60%] z-20"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {getAllReactions(post.id, post.reactions).flatMap(reaction =>
+                              reaction.users.map((user, userIdx) => (
+                                <div
+                                  key={`${reaction.emoji}-${userIdx}`}
+                                  className="bg-black/60 backdrop-blur-sm rounded-full px-2 py-1.5 flex items-center gap-1.5"
+                                >
+                                  <span className="text-base">{reaction.emoji}</span>
+                                  <ImageWithFallback
+                                    src={user.userAvatar}
+                                    alt={user.userName}
+                                    className="w-6 h-6 rounded-full border border-white"
+                                  />
                                 </div>
-                              </div>
-                            ))}
+                              ))
+                            )}
                           </div>
                         )}
 
-                        {/* 좌측 하단: 원본 텍스트 */}
+                        {/* 하단 왼쪽: 작성자 텍스트 */}
                         {post.textOverlay && (
-                          <div className="absolute bottom-4 left-4 max-w-[60%] z-20">
-                            <p className="text-white text-sm bg-black/40 backdrop-blur-sm px-3 py-2 rounded-lg">
-                              {post.textOverlay}
-                            </p>
+                          <div 
+                            className="absolute bottom-4 left-4 max-w-[70%] z-20"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <div className="inline-flex items-center bg-white/90 backdrop-blur-sm rounded-full px-3.5 py-1 gap-2 shadow-sm">
+                              <ImageWithFallback
+                                src={post.userAvatar}
+                                alt={post.userName}
+                                className="w-7 h-7 rounded-full object-cover"
+                              />
+                              <p className="text-sm text-gray-900 whitespace-nowrap">{post.textOverlay}</p>
+                            </div>
                           </div>
                         )}
 
-                        {/* 하단 우측: 댓글 목록 (최신이 위) */}
+                        {/* 댓글 목록: 작성자 텍스트 바로 위, 우측 정렬 */}
                         {getAllComments(post.id, post.comments).length > 0 && (
-                          <div className="absolute bottom-4 right-4 flex flex-col-reverse gap-2 max-w-[65%] max-h-[60%] overflow-y-auto z-20">
-                            {getAllComments(post.id, post.comments).map((comment, idx) => (
-                              <div
-                                key={idx}
-                                className="bg-white/20 backdrop-blur-sm rounded-2xl px-3 py-2 flex items-start gap-2 ml-auto"
-                              >
-                                <div className="flex flex-col items-end gap-1 flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-white text-xs opacity-90">
-                                      {comment.userName}
-                                    </span>
-                                    <ImageWithFallback
-                                      src={comment.userAvatar}
-                                      alt={comment.userName}
-                                      className="w-5 h-5 rounded-full border border-white"
-                                    />
-                                  </div>
-                                  <p className="text-white text-sm text-right">
-                                    {comment.text}
-                                  </p>
-                                  <span className="text-white/60 text-xs">
-                                    {comment.timestamp}
-                                  </span>
+                          <div 
+                            className="absolute bottom-20 right-4 flex flex-col gap-2 items-end max-w-[70%] max-h-[50vh] overflow-y-auto z-20"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {getAllComments(post.id, post.comments).map((comment, idx) => {
+                              const isOwnComment = comment.userName === currentUser.userName;
+                              
+                              return (
+                                <div
+                                  key={idx}
+                                  className="inline-flex items-center bg-white/90 backdrop-blur-sm rounded-full px-3.5 py-1 gap-2 shadow-sm"
+                                >
+                                  <p className="text-sm text-gray-900 whitespace-nowrap">{comment.text}</p>
+                                  
+                                  <ImageWithFallback
+                                    src={comment.userAvatar}
+                                    alt={comment.userName}
+                                    className="w-7 h-7 rounded-full object-cover"
+                                  />
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         )}
                       </div>
@@ -605,6 +606,13 @@ export function CommunityPage({ onBack, onUploadClick, posts }: CommunityPagePro
                               onClick={() => {
                                 setCurrentPostId(post.id);
                                 handleEmojiReaction(emoji, post.id);
+                                
+                                // 폭죽 효과
+                                confetti({
+                                  particleCount: 100,
+                                  spread: 70,
+                                  origin: { y: 0.6 }
+                                });
                               }}
                               className="text-3xl hover:scale-125 transition-transform p-1"
                             >

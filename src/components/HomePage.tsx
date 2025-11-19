@@ -22,7 +22,7 @@ export function HomePage({
 }: HomePageProps) {
   return (
     <>
-      <Header />
+      <Header onNotificationClick={() => onPageChange("notifications" as any)} />
 
       {/* [수정] pt-4 제거: UserGreeting의 배경 SVG가 
         화면 상단(헤더 뒤)까지 꽉 차도록 

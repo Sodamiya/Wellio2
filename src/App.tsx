@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { WelcomePage } from "./components/WelcomePage";
+import { SocialLoginPage } from "./components/SocialLoginPage";
 import { LoginPage } from "./components/LoginPage";
 import { HomePage } from "./components/HomePage";
 import { HospitalSearchPage } from "./components/HospitalSearchPage";
@@ -9,8 +11,12 @@ import { UploadPage } from "./components/UploadPage"; // 👈 UploadPage import
 import { MedicalHistoryPage } from "./components/MedicalHistoryPage"; // 👈 MedicalHistoryPage import
 import { MyReviewsPage } from "./components/MyReviewsPage"; // 👈 MyReviewsPage import
 import { FavoriteHospitalsPage } from "./components/FavoriteHospitalsPage"; // 👈 FavoriteHospitalsPage import
+import { NotificationPage } from "./components/NotificationPage"; // 👈 NotificationPage import
+import { OnboardingPage } from "./components/OnboardingPage"; // 👈 OnboardingPage import
+import { ReviewWritePage } from "./components/ReviewWritePage"; // 👈 ReviewWritePage import
+import { Toaster } from "sonner@2.0.3"; // 👈 Toaster import
 
-type Page = "home" | "community" | "hospital" | "profile" | "hospital-detail" | "upload" | "medical-history" | "my-reviews" | "favorite-hospitals";
+type Page = "home" | "community" | "hospital" | "profile" | "hospital-detail" | "upload" | "medical-history" | "my-reviews" | "favorite-hospitals" | "notifications" | "write-review";
 
 // 병원 타입 정의
 interface Hospital {
@@ -55,8 +61,12 @@ interface Post {
 }
 
 export default function App() {
-  // 👈 2. 로그인 페이지가 보이도록 false로 유지
+  // 로그인 상태 관리
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // 온보딩 상태 관리
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  // 로그인 플로우 상태: 'welcome' | 'social' | 'email'
+  const [loginStep, setLoginStep] = useState<'welcome' | 'social' | 'email'>('welcome');
   const [userName, setUserName] = useState("김건강");
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
@@ -242,8 +252,54 @@ export default function App() {
     }
   };
 
+  // 로그인 플로우 처리
   if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+    // Step 1: 환영 페이지
+    if (loginStep === 'welcome') {
+      return (
+        <WelcomePage
+          onGuestMode={() => {
+            // 기본 계정으로 둘러보기 - 온보딩 시작
+            setUserName("게스트");
+            setIsLoggedIn(true);
+            setShowOnboarding(true);
+          }}
+          onSignUp={() => {
+            // 다른 방법으로 시작하기 - SNS 로그인 페이지로
+            setLoginStep('social');
+          }}
+        />
+      );
+    }
+    
+    // Step 2: SNS 로그인 페이지
+    if (loginStep === 'social') {
+      return (
+        <SocialLoginPage
+          onBack={() => setLoginStep('welcome')}
+          onEmailLogin={() => setLoginStep('email')}
+        />
+      );
+    }
+    
+    // Step 3: 이메일 로그인 페이지
+    if (loginStep === 'email') {
+      return <LoginPage onLogin={handleLogin} />;
+    }
+  }
+
+  // 온보딩 화면 표시
+  if (showOnboarding) {
+    return (
+      <OnboardingPage
+        onComplete={() => {
+          setShowOnboarding(false);
+          setCurrentPage("home");
+        }}
+        userName={userName}
+        posts={posts}
+      />
+    );
   }
 
   return (
@@ -274,6 +330,7 @@ export default function App() {
           <CommunityPage
             onBack={() => setCurrentPage("home")}
             onUploadClick={() => setCurrentPage("upload")}
+            onNotificationClick={() => setCurrentPage("notifications")}
             posts={posts}
           />
         )}
@@ -299,6 +356,7 @@ export default function App() {
         {currentPage === "medical-history" && (
           <MedicalHistoryPage
             onBack={() => setCurrentPage("home")}
+            onWriteReview={() => setCurrentPage("write-review")}
           />
         )}
         {/* 👇 6. '내 리뷰' 페이지 추가 */}
@@ -315,7 +373,21 @@ export default function App() {
             onToggleFavorite={toggleFavorite}
           />
         )}
+        {/* 👇 8. '알림' 페이지 추가 */}
+        {currentPage === "notifications" && (
+          <NotificationPage
+            onBack={() => setCurrentPage("home")}
+          />
+        )}
+        {/* 👇 9. '리뷰 작성' 페이지 추가 */}
+        {currentPage === "write-review" && (
+          <ReviewWritePage
+            onBack={() => setCurrentPage("home")}
+          />
+        )}
       </div>
+      {/* 👇 Toaster 추가 - 화면 하단에 토스트 메시지 표시 */}
+      <Toaster position="bottom-center" />
     </div>
   );
 }

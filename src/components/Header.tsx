@@ -12,6 +12,7 @@ interface HeaderProps {
   onBack?: () => void;
   showSearchButton?: boolean;
   showSettingsButton?: boolean;
+  onNotificationClick?: () => void; // 알림 버튼 클릭 핸들러 추가
 }
 
 export function Header({
@@ -20,6 +21,7 @@ export function Header({
   onBack,
   showSearchButton = false,
   showSettingsButton = false,
+  onNotificationClick,
 }: HeaderProps) {
   // --- 'title' prop이 있으면 '서브 페이지 헤더' (내 정보) ---
   if (title) {
@@ -102,7 +104,10 @@ export function Header({
         </div>
 
         {/* --- 말풍선 알림 --- */}
-        <button className="relative bg-white rounded-lg px-4 py-2 transition-colors flex-1 min-w-0">
+        <button
+          className="relative bg-white rounded-lg px-4 py-2 transition-colors flex-1 min-w-0"
+          onClick={onNotificationClick}
+        >
           <div
             className="absolute top-1/2 -right-2 -translate-y-1/2 w-0 h-0
                         border-t-[8px] border-t-transparent
@@ -116,7 +121,10 @@ export function Header({
       </div>
 
       {/* --- 2. 오른쪽: 기존 벨 아이콘 --- */}
-      <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors flex-shrink-0">
+      <button
+        onClick={onNotificationClick}
+        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-50 transition-colors flex-shrink-0"
+      >
         <Bell size={20} className="text-[#1A1A1A]" />
       </button>
     </header>

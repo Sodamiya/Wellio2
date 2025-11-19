@@ -39,6 +39,7 @@ export function FavoriteHospitalsPage({ onBack, favoriteHospitals, onToggleFavor
               hospital={hospital}
               isFavorite={true}
               onToggleFavorite={onToggleFavorite}
+              isInFavoritePage={true} // 찜한 병원 페이지임을 표시
               onClick={() => {
                 // 병원 상세 페이지로 이동하는 로직 추가 가능
               }}

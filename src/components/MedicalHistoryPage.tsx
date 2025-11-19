@@ -7,6 +7,7 @@ import { Button } from "./ui/button"; // Button 컴포넌트를 사용하기 위
 
 interface MedicalHistoryPageProps {
   onBack: () => void;
+  onWriteReview?: () => void; // 리뷰 작성 페이지로 이동
 }
 
 interface MedicalRecord {
@@ -117,7 +118,7 @@ const getDayOfWeek = (dateString: string) => {
   return '';
 }
 
-export function MedicalHistoryPage({ onBack }: MedicalHistoryPageProps) {
+export function MedicalHistoryPage({ onBack, onWriteReview }: MedicalHistoryPageProps) {
   const [activeTab, setActiveTab] = useState<"treatment" | "medical">("treatment");
   const [selectedFilter, setSelectedFilter] = useState<string>("period"); 
 
@@ -261,6 +262,12 @@ export function MedicalHistoryPage({ onBack }: MedicalHistoryPageProps) {
                 <div className="flex gap-2 pt-2">
                   <Button 
                     variant="outline"
+                    onClick={() => {
+                      if (record.id === 1) {
+                        // 첫 번째 레코드는 리뷰 작성 페이지로 이동
+                        onWriteReview?.();
+                      }
+                    }}
                     className="flex-1 py-3 h-14 text-sm font-semibold border-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     {record.id === 1 ? '리뷰쓰기' : '작성한 리뷰'} 

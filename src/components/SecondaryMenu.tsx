@@ -15,18 +15,18 @@ export function SecondaryMenu() {
         </button>
       </div>
 
-      {/* 2. 진료이력 */}
-      <button className="w-full aspect-square flex flex-col items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
-        {/* TODO: 이 아이콘을 실제 SVG/이미지로 교체하세요 */}
-        <ClipboardList size={32} className="text-gray-500 md:w-10 md:h-10" />
-        <span className="mt-2 text-sm font-medium text-gray-800">진료이력</span>
-      </button>
-
+   
       {/* 3. 건강검진 */}
       <button className="w-full aspect-square flex flex-col items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
         {/* TODO: 이 아이콘을 실제 SVG/이미지로 교체하세요 */}
         <UserCheck size={32} className="text-gray-500 md:w-10 md:h-10" />
         <span className="mt-2 text-sm font-medium text-gray-800">건강검진</span>
+      </button>
+   {/* 2. 진료이력 */}
+      <button className="w-full aspect-square flex flex-col items-center justify-center bg-white rounded-2xl shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
+        {/* TODO: 이 아이콘을 실제 SVG/이미지로 교체하세요 */}
+        <ClipboardList size={32} className="text-gray-500 md:w-10 md:h-10" />
+        <span className="mt-2 text-sm font-medium text-gray-800">원클릭보험</span>
       </button>
 
     </div>
